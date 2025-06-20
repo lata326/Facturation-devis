@@ -34,4 +34,6 @@ class company extends Model
     {
         return $this->belongsTo(FormeJuridique::class, 'forme_juridique_id');
     }
+
+    
 }

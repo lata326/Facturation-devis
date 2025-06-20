@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
@@ -17,13 +16,15 @@ class CompanyController extends Controller
     public function __construct(CompanyService $companyService)
     {
         $this->companyService = $companyService;
-        $this->middleware('auth:sanctum');
+        // ❌ Middleware supprimé
     }
 
-    public function index(): JsonResponse
+    /**
+     * Liste de toutes les entreprises
+     */
+    public function getAllCompanies(): JsonResponse
     {
-        $user = auth()->user();
-        $companies = $this->companyService->getUserCompanies($user);
+        $companies = Company::all();
 
         return response()->json([
             'success' => true,
@@ -33,11 +34,29 @@ class CompanyController extends Controller
         ]);
     }
 
+    /**
+     * Liste publique sans filtrage par utilisateur
+     */
+    public function index(): JsonResponse
+    {
+        $companies = Company::all(); // anciennement filtré par utilisateur
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'companies' => $companies
+            ]
+        ]);
+    }
+
+    /**
+     * Création d'une entreprise sans utilisateur lié
+     */
     public function store(CompanyRequest $request): JsonResponse
     {
         try {
-            $user = auth()->user();
-            $company = $this->companyService->createCompany($user, $request->validated());
+            // Création sans utilisateur connecté
+            $company = $this->companyService->createCompany(null, $request->validated());
             $company->load('formeJuridique');
 
             return response()->json([
@@ -57,14 +76,7 @@ class CompanyController extends Controller
 
     public function show(Company $company): JsonResponse
     {
-        // Vérifier que l'entreprise appartient à l'utilisateur connecté
-        if ($company->user_id !== auth()->id()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Accès non autorisé'
-            ], 403);
-        }
-
+        // ❌ Suppression de la vérification de propriété
         $company->load('formeJuridique');
 
         return response()->json([
@@ -77,14 +89,6 @@ class CompanyController extends Controller
 
     public function update(CompanyRequest $request, Company $company): JsonResponse
     {
-        // Vérifier que l'entreprise appartient à l'utilisateur connecté
-        if ($company->user_id !== auth()->id()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Accès non autorisé'
-            ], 403);
-        }
-
         try {
             $company = $this->companyService->updateCompany($company, $request->validated());
             $company->load('formeJuridique');
@@ -106,15 +110,6 @@ class CompanyController extends Controller
 
     public function destroy(Company $company): JsonResponse
     {
-        // Vérifier que l'entreprise appartient à l'utilisateur connecté
-        
-        if ($company->user_id !== auth()->id()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Accès non autorisé'
-            ], 403);
-        }
-
         try {
             $this->companyService->deleteCompany($company);
 
@@ -141,6 +136,4 @@ class CompanyController extends Controller
             ]
         ]);
     }
-
 }
-

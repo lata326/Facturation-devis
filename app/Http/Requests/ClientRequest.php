@@ -3,34 +3,27 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class ClientRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
-         $clientId = $this->route('client') ? $this->route('client')->clients_id : null;
+        $clientId = $this->route('client') ? $this->route('client')->id : null;
 
         return [
-            
-             'nom' => 'required|string|max:255',
+            'nom' => 'required|string|max:255',
             'prenom' => 'required|string|max:255',
-            'mail' => 'required|email|unique:clients,mail,' . $clientId . ',clients_id',
+            'mail' => 'required|email|unique:clients,mail,' . $clientId . ',id',
             'ville' => 'required|string|max:255',
             'pays' => 'required|string|max:255',
-            'code_postal' => 'required|string|max:10',
+            'code_postal' => 'string|max:10',
             'telephone' => 'required|string|max:20',
         ];
     }
@@ -45,7 +38,6 @@ class ClientRequest extends FormRequest
             'mail.unique' => 'Cet email est déjà utilisé',
             'ville.required' => 'La ville est obligatoire',
             'pays.required' => 'Le pays est obligatoire',
-            'code_postal.required' => 'Le code postal est obligatoire',
             'telephone.required' => 'Le téléphone est obligatoire',
         ];
     }
@@ -59,3 +51,4 @@ class ClientRequest extends FormRequest
         ], 422));
     }
 }
+

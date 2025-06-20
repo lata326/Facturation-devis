@@ -22,16 +22,12 @@ class ArticleController extends Controller
             $query = Article::query();
 
             // Filtres
-            if ($request->filled('entreprise_id')) {
-                $query->byEntreprise($request->entreprise_id);
+            if ($request->filled('company_id')) {
+                $query->bycompanies($request->company_id);
             }
 
             if ($request->filled('search')) {
                 $query->search($request->search);
-            }
-
-            if ($request->filled('actif')) {
-                $query->where('actif', $request->boolean('actif'));
             }
 
             // Filtre par date
@@ -189,15 +185,15 @@ class ArticleController extends Controller
     {
         $request->validate([
             'query' => 'required|string|min:2',
-            'entreprise_id' => 'sometimes|integer',
+            'company_id' => 'sometimes|integer',
             'per_page' => 'sometimes|integer|min:1|max:100'
         ]);
 
         try {
             $query = Article::search($request->query);
             
-            if ($request->filled('entreprise_id')) {
-                $query->byEntreprise($request->entreprise_id);
+            if ($request->filled('company_id')) {
+                $query->byCompanies($request->company_id);
             }
 
             $query->active();

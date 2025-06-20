@@ -28,7 +28,7 @@ class UpdateArticleRequest extends FormRequest
         $articleId = $this->route('article');
         return [
 
-              'entreprise_id' => 'sometimes|integer|min:1',
+              'company_id' => 'sometimes|integer|min:1',
             'code_article' => [
                 'sometimes',
                 'string',

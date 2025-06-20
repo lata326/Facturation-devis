@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('articles', function (Blueprint $table) {
-            $table->id('article_id');
-            $table->unsignedBigInteger('entreprise_id');
+            $table->id();
+            $table->unsignedBigInteger('company_id');
             $table->string('code_article', 50)->unique();
             $table->string('designation', 255);
             $table->text('description')->nullable();
@@ -21,7 +21,7 @@ return new class extends Migration
             $table->integer('taux_tva');
             $table->timestamps();
             
-            $table->index(['entreprise_id',]);
+            $table->index(['company_id',]);
             $table->index('code_article');
             $table->index('designation');
         });

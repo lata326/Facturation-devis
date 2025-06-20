@@ -1,17 +1,18 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
 use App\Models\Devis;
 use App\Models\LigneDevis;
 use App\Models\Article;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Api\BaseController;
 use App\Http\Requests\DevisRequest;
 use App\Services\ExportService;
 use Illuminate\Support\Facades\DB;
 
 
-class DevisController extends Controller
+class DevisController extends BaseController
 {   
 
 
@@ -26,12 +27,12 @@ class DevisController extends Controller
      */
     public function index(Request $request)
     {
-        $devis = Devis::with(['client', 'entreprise'])
+        $devis = Devis::with(['client', 'companies'])
             ->when($request->status, function ($query, $status) {
                 return $query->where('status', $status);
             })
-            ->when($request->client_id, function ($query, $clientId) {
-                return $query->where('client_id', $clientId);
+            ->when($request->id, function ($query, $clientId) {
+                return $query->where('id', $clientId);
             })
             ->when($request->search, function ($query, $search) {
                 return $query->where('numero_devis', 'like', "%{$search}%");
@@ -63,7 +64,7 @@ class DevisController extends Controller
                 ]);
             }
 
-            $devis->load(['client', 'entreprise', 'lignes.article']);
+            $devis->load(['client', 'companies', 'lignes.article']);
             
             DB::commit();
             return $this->sendResponse($devis, 'Devis créé avec succès.', 201);
@@ -78,7 +79,7 @@ class DevisController extends Controller
      */
      public function show(Devis $devis)
     {
-        $devis->load(['client', 'entreprise', 'lignes.article']);
+        $devis->load(['client', 'companies', 'lignes.article']);
         return $this->sendResponse($devis, 'Devis récupéré avec succès.');
     }
 
@@ -107,7 +108,7 @@ class DevisController extends Controller
                 ]);
             }
 
-            $devis->load(['client', 'entreprise', 'lignes.article']);
+            $devis->load(['client', 'companies', 'lignes.article']);
             
             DB::commit();
             return $this->sendResponse($devis, 'Devis mis à jour avec succès.');
@@ -145,7 +146,7 @@ class DevisController extends Controller
     public function exportPdf(Devis $devis)
     {
         try {
-            $devis->load(['client', 'entreprise', 'lignes.article']);
+            $devis->load(['client', 'companies', 'lignes.article']);
             $pdf = $this->exportService->exportDevisToPdf($devis);
             
             return response($pdf->output(), 200, [
@@ -160,7 +161,7 @@ class DevisController extends Controller
     public function exportExcel(Devis $devis)
     {
         try {
-            $devis->load(['client', 'entreprise', 'lignes.article']);
+            $devis->load(['client', 'companies', 'lignes.article']);
             $filePath = $this->exportService->exportDevisToExcel($devis);
             
             return response()->download($filePath)->deleteFileAfterSend(true);

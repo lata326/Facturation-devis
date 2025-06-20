@@ -4,15 +4,17 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\TrackableHistory;
 
 class Article extends Model
 {
-    use HasFactory;
+        use HasFactory;
+        use TrackableHistory;
 
     protected $primaryKey = 'article_id';
     
     protected $fillable = [
-        'entreprise_id',
+        'company_id',
         'code_article',
         'designation',
         'description',
@@ -40,14 +42,10 @@ class Article extends Model
     protected $hidden = [];
 
     // Scopes pour les recherches
-    public function scopeActive(Builder $query): Builder
-    {
-        return $query->where('designation', true);
-    }
 
-    public function scopeByEntreprise(Builder $query, int $entrepriseId): Builder
+    public function scopeByEntreprise(Builder $query, int $companyId): Builder
     {
-        return $query->where('entreprise_id', $entrepriseId);
+        return $query->where('company_id', $companyId);
     }
 
     public function scopeSearch(Builder $query, string $search): Builder
@@ -70,4 +68,12 @@ class Article extends Model
         return $query;
     }
 
+    protected static function getTypeDocument(): string
+    {
+        return 'article';
+    }
+
 }
+
+
+

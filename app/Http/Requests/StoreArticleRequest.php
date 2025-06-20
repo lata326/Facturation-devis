@@ -38,13 +38,14 @@ class StoreArticleRequest extends FormRequest
     public function messages(): array
     {
         return [
-                'entreprise_id.required' => 'L\'ID de l\'entreprise est obligatoire',
+                'company_id.required' => 'L\'ID de l\'entreprise est obligatoire',
                 'code_article.required' => 'Le code article est obligatoire',
                 'code_article.unique' => 'Ce code article existe déjà',
                 'designation.required' => 'La désignation est obligatoire',
                 'prix_unitaire.required' => 'Le prix unitaire est obligatoire',
                 'prix_unitaire.numeric' => 'Le prix doit être un nombre',
-                'taux_tva.integer' => 'Le taux de TVA doit être un entier',
+                'taux_tva.numeric' => 'Le taux de TVA doit être un nombre.',
+                'taux_tva.min' => 'Le taux de TVA doit être positif.',
                 'taux_tva.max' => 'Le taux de TVA ne peut pas dépasser 100%'
         ];
     }

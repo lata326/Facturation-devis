@@ -18,12 +18,16 @@ return new class extends Migration
             $table->foreignId('client_id')->constrained('clients');
             $table->date('date_emission');
             $table->date('date_echeance');
-            $table->enum('status', ['brouillon', 'envoyee', 'payee', 'en_retard', 'annulee'])->default('brouillon');
+            $table->enum('status', ['brouillon', 'envoyee', 'payee', 'impayee', 'annulee'])->default('brouillon');
             $table->string('condition_paiement')->default('30 jours');
-            $table->enum('mode_paiement', ['Non spécifié', 'Espèces', 'Virement bancaire', 'Chèques', 'Carte bancaire', 'PayPal'])->default('Non spécifié');
+            $table->enum('mode_paiement', ['Non spécifié', 'Espèces', 'Virement bancaire', 'Chèques', 'Carte bancaire', 'PayPal', 'momo'])->default('Non spécifié');
+            
+            // Montants détaillés
             $table->decimal('montant_ht', 10, 2)->default(0);
+            $table->decimal('montant_tva', 10, 2)->default(0); // ✅ Ajouté pour la TVA
             $table->decimal('montant_ttc', 10, 2)->default(0);
-            $table->decimal('montant_total', 10, 2)->default(0);
+            // $table->decimal('montant_total', 10, 2)->default(0); // ❌ Supprimé car redondant avec montant_ttc
+            
             $table->enum('devise', ['FCFA', 'USD', 'EUR'])->default('EUR');
             $table->text('signature')->nullable();
             $table->date('date_signature')->nullable();

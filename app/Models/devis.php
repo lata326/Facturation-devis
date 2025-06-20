@@ -5,15 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
+use App\Traits\TrackableHistory;
 
 class devis extends Model
 {
-    use HasFactory;
+    use HasFactory;  
+    use TrackableHistory;
 
     protected $table = 'devis';
 
     protected $fillable = [
-        'client_id', 'entreprise_id', 'numero_devis', 'date_creation',
+        'clients_id', 'company_id', 'numero_devis', 'date_creation',
         'date_expiration', 'date_echeance', 'montant_ht', 'montant_ttc',
         'montant_total', 'status', 'signature', 'date_signature', 'note'
     ];
@@ -48,12 +50,12 @@ class devis extends Model
 
     public function client()
     {
-        return $this->belongsTo(Client::class);
+        return $this->belongsTo(Clients::class);
     }
 
     public function entreprise()
     {
-        return $this->belongsTo(Entreprise::class);
+        return $this->belongsTo(Companies::class);
     }
 
     public function lignes()
@@ -64,6 +66,11 @@ class devis extends Model
     public function facture()
     {
         return $this->hasOne(Facture::class);
+    }
+
+    protected static function getTypeDocument(): string
+    {
+        return 'devis';
     }
 
     public static function generateNumeroDevis()

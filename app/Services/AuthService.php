@@ -41,15 +41,14 @@ class AuthService
 
     public function login(string $email, string $password): array
     {
+        
         $user = User::where('email', $email)->first();
-
+         
+        
         if (!$user || !Hash::check($password, $user->password)) {
             throw new \Exception('Identifiants incorrects');
         }
 
-        if (!$user->is_active) {
-            throw new \Exception('Compte non vérifié. Veuillez vérifier votre email.');
-        }
 
         // Envoyer le code de vérification de connexion
         $this->emailService->sendVerificationCode($user, 'login_verification');

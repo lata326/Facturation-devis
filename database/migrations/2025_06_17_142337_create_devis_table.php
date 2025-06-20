@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('devis', function (Blueprint $table) {
             $table->id();
             $table->foreignId('client_id')->constrained('clients');
-            $table->foreignId('entreprise_id')->constrained('entreprises');
+            $table->foreignId('company_id')->constrained('companies');
             $table->string('numero_devis')->unique();
             $table->date('date_creation');
             $table->date('date_expiration');

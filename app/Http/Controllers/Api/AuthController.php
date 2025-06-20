@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers\Api;
 
+
+namespace App\Http\Controllers\Api;
+
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
@@ -20,6 +23,43 @@ class AuthController extends Controller
     {
         $this->authService = $authService;
     }
+
+
+    /**
+     * Récupérer la liste des utilisateurs.
+     */
+    public function index(Request $request): JsonResponse
+    {
+        $users = User::all();
+
+        return response()->json([
+            'success' => true,
+            'data' => $users,
+            'message' => 'Liste des utilisateurs récupérée avec succès'
+        ]);
+    }
+
+    /**
+     * Récupérer un utilisateur spécifique.
+     */
+        public function show(Request $request, $id): JsonResponse
+        {
+            $user = User::find($id);
+
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Utilisateur non trouvé'
+                ], 404);
+            }
+
+            return response()->json([
+                'success' => true,
+                'data' => $user,
+                'message' => 'Utilisateur récupéré avec succès'
+            ]);
+        }
+    
 
     public function register(RegisterRequest $request): JsonResponse
    {
@@ -49,7 +89,7 @@ class AuthController extends Controller
         try {
             $result = $this->authService->login(
                 $request->email,
-                $request->password
+               $request->password,
             );
 
             return response()->json([
@@ -220,11 +260,6 @@ class AuthController extends Controller
             'message' => 'Utilisateur récupéré avec succès'
         ]);
     }
-
-    
-
-    
-       
 
 
 }

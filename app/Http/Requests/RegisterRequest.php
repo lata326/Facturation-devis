@@ -43,7 +43,7 @@ class RegisterRequest extends FormRequest
             'email.unique' => 'Cet email est déjà utilisé',
             'password.required' => 'Le mot de passe est requis',
             'password.min' => 'Le mot de passe doit contenir au moins 8 caractères',
-            'password.confirmed' => 'La confirmation du mot de passe ne correspond pas',
+           
         ];
     }
 

@@ -1,14 +1,15 @@
 <?php
 
 namespace App\Models;
-
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
+use App\Traits\TrackableHistory;
 
-class factures extends Model
+class Facture extends Model
 {
     use HasFactory;
+    use TrackableHistory;
 
     protected $fillable = [
         'numero_facture', 'devis_id', 'client_id', 'date_emission',
@@ -51,6 +52,11 @@ class factures extends Model
         return $this->belongsTo(Devis::class);
     }
 
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class, 'facture_id');
+    }
+
     public function lignes()
     {
         return $this->hasMany(LigneFacture::class);
@@ -84,5 +90,33 @@ class factures extends Model
             'montant_ttc' => $montantTTC,
             'montant_total' => $montantTTC
         ]);
+    }
+
+    protected static function getTypeDocument(): string
+    {
+        return 'facture';
+    }
+
+    // Scopes pour les requêtes automatiques
+    public function scopeEcheanceProche($query)
+    {
+        $dateLimit = Carbon::now()->addHours(48);
+        return $query->where('date_echeance', '<=', $dateLimit)
+                    ->where('date_echeance', '>', Carbon::now())
+                    ->where('status', '!=', 'payee');
+    }
+
+    public function scopeEnRetard($query)
+    {
+        return $query->where('date_echeance', '<', Carbon::now())
+                    ->where('status', '!=', 'payee');
+    }
+
+    // Vérifier si une notification a déjà été envoyée
+    public function hasNotification($type)
+    {
+        return $this->notifications()
+                   ->where('type', $type)
+                   ->exists();
     }
 }

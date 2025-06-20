@@ -11,15 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-       Schema::create('verification_codes', function (Blueprint $table) {
+
+        Schema::create('verification_codes', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users', 'user_id')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->string('code', 6);
             $table->enum('type', ['email_verification', 'login_verification', 'password_reset']);
             $table->timestamp('expires_at');
             $table->boolean('used')->default(false);
             $table->timestamps();
-        });
+       });
+
     }
 
     /**
